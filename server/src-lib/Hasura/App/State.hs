@@ -178,7 +178,8 @@ data AppContext = AppContext
     acSchemaSampledFeatureFlags :: SchemaSampledFeatureFlags,
     acRemoteSchemaResponsePriority :: RemoteSchemaResponsePriority,
     acHeaderPrecedence :: HeaderPrecedence,
-    acTraceQueryStatus :: TraceQueryStatus
+    acTraceQueryStatus :: TraceQueryStatus,
+    acRelayMode :: RelayModeStatus
   }
 
 -- | Collection of the LoggerCtx, the regular Logger and the PGLogger
@@ -303,7 +304,8 @@ buildAppContextRule = proc (ServeOptions {..}, env, _keys, checkFeatureFlag) -> 
           acSchemaSampledFeatureFlags = schemaSampledFeatureFlags,
           acRemoteSchemaResponsePriority = soRemoteSchemaResponsePriority,
           acHeaderPrecedence = soHeaderPrecedence,
-          acTraceQueryStatus = soTraceQueryStatus
+          acTraceQueryStatus = soTraceQueryStatus,
+          acRelayMode = soRelayMode
         }
   where
     buildEventEngineCtx = Inc.cache proc (httpPoolSize, fetchInterval, fetchBatchSize) -> do
@@ -391,5 +393,6 @@ buildCacheDynamicConfig AppContext {..} = do
       _cdcMetadataDefaults = acMetadataDefaults,
       _cdcApolloFederationStatus = acApolloFederationStatus,
       _cdcCloseWebsocketsOnMetadataChangeStatus = acCloseWebsocketsOnMetadataChangeStatus,
-      _cdcSchemaSampledFeatureFlags = acSchemaSampledFeatureFlags
+      _cdcSchemaSampledFeatureFlags = acSchemaSampledFeatureFlags,
+      _cdcRelayMode = acRelayMode
     }

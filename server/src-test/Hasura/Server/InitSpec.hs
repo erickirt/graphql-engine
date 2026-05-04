@@ -108,7 +108,8 @@ emptyServeOptionsRaw =
       rsoDisableNativeQueryValidation = NativeQuery.AlwaysValidateNativeQueries,
       rsoPreserve401Errors = UUT.MapEverythingTo200,
       rsoServerTimeout = Nothing,
-      rsoLogMaskedVariables = Nothing
+      rsoLogMaskedVariables = Nothing,
+      rsoRelayMode = UUT.RelayModeEnabled
     }
 
 mkServeOptionsSpec :: Hspec.Spec

@@ -46,6 +46,8 @@ module Hasura.Server.Init.Config
     isAllowListEnabled,
     DevModeStatus (..),
     isDevModeEnabled,
+    RelayModeStatus (..),
+    isRelayEnabled,
     TelemetryStatus (..),
     isTelemetryEnabled,
     WsReadCookieStatus (..),
@@ -341,7 +343,8 @@ data ServeOptionsRaw impl = ServeOptionsRaw
     rsoDisableNativeQueryValidation :: NativeQuery.Validation.DisableNativeQueryValidation,
     rsoPreserve401Errors :: Preserve401ErrorsStatus,
     rsoServerTimeout :: Maybe (Refined NonNegative Int),
-    rsoLogMaskedVariables :: Maybe (HashSet Text)
+    rsoLogMaskedVariables :: Maybe (HashSet Text),
+    rsoRelayMode :: RelayModeStatus
   }
 
 deriving stock instance (Show (Logging.EngineLogType impl)) => Show (ServeOptionsRaw impl)
@@ -430,6 +433,25 @@ instance FromJSON DevModeStatus where
 
 instance ToJSON DevModeStatus where
   toJSON = J.toJSON . isDevModeEnabled
+
+-- | Whether or not to enable the Relay API endpoint (@/v1beta1/relay@).
+data RelayModeStatus = RelayModeEnabled | RelayModeDisabled
+  deriving stock (Show, Eq, Ord, Generic)
+
+instance NFData RelayModeStatus
+
+instance Hashable RelayModeStatus
+
+isRelayEnabled :: RelayModeStatus -> Bool
+isRelayEnabled = \case
+  RelayModeEnabled -> True
+  RelayModeDisabled -> False
+
+instance FromJSON RelayModeStatus where
+  parseJSON = fmap (bool RelayModeDisabled RelayModeEnabled) . J.parseJSON
+
+instance ToJSON RelayModeStatus where
+  toJSON = J.toJSON . isRelayEnabled
 
 -- | A representation of whether or not to enable telemetry that is isomorphic to 'Bool'.
 data TelemetryStatus = TelemetryEnabled | TelemetryDisabled
@@ -671,7 +693,8 @@ data ServeOptions impl = ServeOptions
     soDisableNativeQueryValidation :: NativeQuery.Validation.DisableNativeQueryValidation,
     soPreserve401Errors :: Preserve401ErrorsStatus,
     soServerTimeout :: Refined NonNegative Int,
-    soLogMaskedVariables :: HashSet Text
+    soLogMaskedVariables :: HashSet Text,
+    soRelayMode :: RelayModeStatus
   }
 
 -- | 'ResponseInternalErrorsConfig' represents the encoding of the

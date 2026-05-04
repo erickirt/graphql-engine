@@ -237,6 +237,7 @@ mkServeOptions sor@ServeOptionsRaw {..} = do
   soPreserve401Errors <- withOptionSwitch' rsoPreserve401Errors (\case { MapEverythingTo200 -> False; Preserve401Errors -> True }, bool MapEverythingTo200 Preserve401Errors) preserve401ErrorsOption
   soServerTimeout <- withOptionDefault rsoServerTimeout serverTimeoutOption
   soLogMaskedVariables <- withOptionDefault rsoLogMaskedVariables logMaskedVariablesOption
+  soRelayMode <- withOptionSwitch' rsoRelayMode (isRelayEnabled, bool RelayModeDisabled RelayModeEnabled) enableRelayOption
   pure ServeOptions {..}
 
 -- | Fetch Postgres 'Query.ConnParams' components from the environment

@@ -340,7 +340,8 @@ serveOptions =
       soDisableNativeQueryValidation = Init._default Init.disableNativeQueryValidationOption,
       soPreserve401Errors = Init.MapEverythingTo200,
       soServerTimeout = Init._default Init.serverTimeoutOption,
-      soLogMaskedVariables = Set.empty
+      soLogMaskedVariables = Set.empty,
+      soRelayMode = Init.RelayModeEnabled
     }
 
 -- | What log level should be used by the engine; this is not exported, and
